@@ -18,7 +18,7 @@ BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: No se pudo completar la operación en la base de datos.';
+        RESIGNAL;
     END;
     START TRANSACTION;
     CASE p_opcion
@@ -29,7 +29,7 @@ BEGIN
             ELSE
                 INSERT INTO usuario (nombre, apellido, fecha_nacimiento, foto, genero, correo_electronico, contrasena, alias, tipo_usuario)
                 VALUES (p_nombre, p_apellido, p_fecha_nacimiento, p_foto, p_genero, p_correo_electronico, p_contrasena, p_alias, p_tipo_usuario);
-                COMMIT;
+                
             END IF;
         WHEN 'UPDATE' THEN
             IF TIMESTAMPDIFF(YEAR, p_fecha_nacimiento, CURDATE()) < 18 THEN
@@ -39,31 +39,33 @@ BEGIN
                 UPDATE usuario
                 SET nombre = p_nombre, apellido = p_apellido, fecha_nacimiento = p_fecha_nacimiento, foto = p_foto, genero = p_genero
                 WHERE id_usuario = p_id_usuario;
-                COMMIT;
+                
             END IF;
         WHEN 'UPDATE_PASSWORD' THEN
             UPDATE usuario
             SET contrasena = p_contrasena
             WHERE id_usuario = p_id_usuario;
-            COMMIT;
+            
 
         WHEN 'SELECT_ALL' THEN
             SELECT id_usuario, nombre, apellido, fecha_nacimiento, foto, genero, correo_electronico, alias, tipo_usuario
             FROM usuario
             WHERE estatus = 1;
+            LEAVE proc;
 
         WHEN 'SELECT_ONE' THEN
             SELECT id_usuario, nombre, apellido, fecha_nacimiento, foto, genero, correo_electronico, alias, tipo_usuario
             FROM usuario
             WHERE id_usuario = p_id_usuario;
+            LEAVE proc;
 
         WHEN 'DELETE' THEN
             UPDATE usuario
             SET estatus = 0
             WHERE id_usuario = p_id_usuario;
-            COMMIT;
+            
         ELSE 
-            ROLLBACK;
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Opción de gestión no valida';
     END CASE;
+    COMMIT;
 END //
