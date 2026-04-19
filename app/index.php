@@ -29,12 +29,12 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
         exit;
     }
 
-    /*
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        (new UsuarioController())->create();
+        (new UsuarioController())->postUser();
         exit;
     }
-    */
+    
 
     // Método no permitido
     http_response_code(405);

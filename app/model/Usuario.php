@@ -47,7 +47,7 @@ class Usuario{
             $foto = $data['foto'];
             $genero = $data['genero'];
             $correo_electronico = $data['correo_electronico'];
-            $contrasena = $data['contrasena'];
+            $contrasena = password_hash($data['contrasena'], PASSWORD_DEFAULT);
             $alias = $data['alias'];
             $tipo_usuario = $data['tipo_usuario'];
 

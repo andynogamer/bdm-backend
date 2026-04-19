@@ -38,5 +38,16 @@ class UsuarioController{
         }
     }
 
+    public function postUser(){
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $response = Usuario::crear($data);
+        if($response['success']){
+            $this->renderJSON($response['data'], 200);
+        }else{
+            $this->renderJSON($response, 500);
+        }
+    }
+
 
 }
