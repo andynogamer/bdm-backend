@@ -6,9 +6,16 @@ class Usuario{
         try{
             $db = Database::connect();
             $stmt = $db->query("CALL sp_GestionUsuarios('SELECT_ALL', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)");
+            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($usuarios as &$user) {
+                if ($user['foto']) {
+                    
+                    $user['foto'] = base64_encode($user['foto']);
+                }
+            }
             return [
                 'success' => true,
-                'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)
+                'data' => $usuarios
             ];
 
         }catch(Exception $e){
@@ -47,9 +54,14 @@ class Usuario{
             $foto = $data['foto'];
             $genero = $data['genero'];
             $correo_electronico = $data['correo_electronico'];
-            $contrasena = password_hash($data['contrasena'], PASSWORD_DEFAULT);
+            $contrasena = $data['contrasena'];
             $alias = $data['alias'];
             $tipo_usuario = $data['tipo_usuario'];
+            if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $contrasena)) {
+                return [
+                    'success' => false, 
+                    'error' => 'La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo'];
+            }
 
             $stmt = $db->prepare("CALL sp_GestionUsuarios('INSERT', NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
@@ -59,7 +71,7 @@ class Usuario{
                 $foto,
                 $genero,
                 $correo_electronico,
-                $contrasena,
+                password_hash($data['contrasena'], PASSWORD_DEFAULT),
                 $alias,
                 $tipo_usuario
             ]);
