@@ -51,6 +51,13 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
         (new UsuarioController())->deleteSession();
         exit;
     }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($path[4]) && $path[4] === 'delete'){
+        
+        AuthMiddleware::checkAuthorization([2]);
+        (new UsuarioController())->deleteUser();
+        exit;
+    }
 
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);

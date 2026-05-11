@@ -115,6 +115,19 @@ class UsuarioController{
         }
     }
 
+    public function deleteUser(){
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $id_usuario = null;
+        isset($data['id_usuario']) ? $id_usuario = $data['id_usuario'] : $this->renderJSON(['success' => false, 'error' => 'No ha seleccionado un usuario valido'], 400);
+        $response = Usuario::eliminar($id_usuario);
+        if($response['success']){
+            $this->renderJSON($response, 200);
+        }else{
+            $this->renderJSON($response, 500);
+        }
+    }
+
     public function deleteSession(){
         
         session_destroy();
