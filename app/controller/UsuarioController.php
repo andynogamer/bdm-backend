@@ -116,8 +116,13 @@ class UsuarioController{
     }
 
     public function deleteSession(){
-        session_start();
+        
         session_destroy();
+        $response = [
+            'success' => true,
+            'data' => 'La sesión se ha cerrado'
+        ];
+        $this->renderJSON($response, 200);
     }
 
     

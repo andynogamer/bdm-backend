@@ -21,13 +21,13 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($path[4])) {
         
-        AuthMiddleware::checkAuthorization([2]);
+        AuthMiddleware::checkAuthorization([2]); 
         (new UsuarioController())->getAll();
         exit;
     }
 
     
-    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4]) && $path[4] != 'logout') {
         (new UsuarioController())->getOne($path[4]);
         exit;
     }
@@ -46,6 +46,8 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4]) && $path[4] === 'logout'){
         
+        AuthMiddleware::checkAuthorization([0, 1, 2]);
+        
         (new UsuarioController())->deleteSession();
         exit;
     }
@@ -55,6 +57,6 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
     exit;
 }
 
-// Ruta no encontrada
+
 http_response_code(404);
 echo json_encode(["error" => "Ruta no encontrada"]);
