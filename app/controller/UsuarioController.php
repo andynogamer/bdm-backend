@@ -138,6 +138,50 @@ class UsuarioController{
         $this->renderJSON($response, 200);
     }
 
+    public function updatePassword(){
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        if(empty($data) || !is_array($data) || !isset($data['contrasena']) || !isset($data['nueva_contrasena'])){
+            $this->renderJSON([
+                'success' => false,
+                'error' => 'Datos incompletos'
+            ], 400);
+        }
+        if(!password_verify($data['contrasena'], $_SESSION['usuario']['contrasena'])){
+            $this->renderJSON([
+                'success' => false,
+                'error' => 'La contraseña ingresada no coincide con su contraseña actual'
+            ], 400);
+        }
+        if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $data['nueva_contrasena'])) {
+            $this->renderJSON( [
+                'success' => false, 
+                'error' => 'La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo'
+            ], 400);
+        }
+        $contrasena = password_hash($data['nueva_contrasena'], PASSWORD_DEFAULT);
+
+        $response = Usuario::modificarContrasena($contrasena);
+        
+        if($response['success']){
+            $response_new_user = Usuario::obtenerSesion($_SESSION['usuario']['correo_electronico']);
+            if($response_new_user['success']){
+                if($response_new_user['data']){
+                    $_SESSION['usuario'] = $response_new_user['data'];
+                    $this->renderJSON($response, 200);
+                }
+                $this->renderJSON($response_new_user, 500);
+            }else{
+                $this->renderJSON($response_new_user, 500);
+            }
+            
+            
+        }else{
+            $this->renderJSON($response, 500);
+        }
+
+    }
+
     
 
 

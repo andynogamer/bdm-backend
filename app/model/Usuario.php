@@ -227,6 +227,27 @@ class Usuario{
         }
     }
 
+    public static function modificarContrasena($contrasena){
+        try{
+            $db = Database::connect();
+            $stmt = $db->prepare("CALL sp_GestionUsuarios('UPDATE_PASSWORD', ?, NULL, NULL, NULL, NULL, NULL, NULL, ?, NULL, NULL)");
+            $stmt->execute([
+                $_SESSION['usuario']['id_usuario'],
+                $contrasena
+            ]);
+            return [
+                'success' => true,
+                'data' => 'Se ha cambiado la contraseña'
+            ];
+
+        }catch(Exception $e){
+            return[
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
     public static function eliminar($id){
         try{
             $db = Database::connect();
