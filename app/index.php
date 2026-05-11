@@ -66,6 +66,13 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
         exit;
     }
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($path[4]) && $path[4] === 'update'){
+        
+        AuthMiddleware::checkAuthorization([0, 1, 2]);
+        (new UsuarioController())->updateUser();
+        exit;
+    }
+
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
     exit;

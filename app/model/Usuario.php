@@ -161,11 +161,11 @@ class Usuario{
                     ];
                 }
             }
-            $id_usuario = $data['id_usuario'];
+            $id_usuario = $_SESSION['usuario']['id_usuario'];
             $nombre = mb_strtoupper(trim($data['nombre']));
             $apellido = mb_strtoupper(trim($data['apellido']));
             $fecha_nacimiento = mb_strtoupper(trim($data['fecha_nacimiento']));
-            $foto = $data['foto'];
+            $foto = $data['foto'] ?? null;
             $genero = mb_strtoupper(trim($data['genero']));
             
 

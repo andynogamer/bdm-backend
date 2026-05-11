@@ -138,6 +138,29 @@ class UsuarioController{
         $this->renderJSON($response, 200);
     }
 
+    public function updateUser(){
+        
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $response = Usuario::modificar($data);
+        if($response['success']){
+            $response_new_user = Usuario::obtenerSesion($_SESSION['usuario']['correo_electronico']);
+            if($response_new_user['success']){
+                if($response_new_user['data']){
+                    $_SESSION['usuario'] = $response_new_user['data'];
+                    $this->renderJSON($response, 200);
+                }
+                $this->renderJSON($response_new_user, 500);
+            }else{
+                $this->renderJSON($response_new_user, 500);
+            }
+            
+            
+        }else{
+            $this->renderJSON($response, 400);
+        }
+    }
+
     public function updatePassword(){
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
