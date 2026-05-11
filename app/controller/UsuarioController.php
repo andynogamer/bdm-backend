@@ -100,7 +100,9 @@ class UsuarioController{
                     'data' => 'Ha iniciado sesión exitosamente'
                 ];
                 session_start();
+                
                 $_SESSION['usuario'] = $response['data'];
+                
                 $this->renderJSON($newResponse, 200);
             }
 

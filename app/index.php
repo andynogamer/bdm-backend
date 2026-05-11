@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'controller/UsuarioController.php';
+require_once 'middleware/AuthMiddleware.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = explode('/', trim($uri, '/'));
@@ -19,6 +20,8 @@ $path = explode('/', trim($uri, '/'));
 if (isset($path[3]) && $path[3] === 'usuarios') {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($path[4])) {
+        
+        AuthMiddleware::checkAuthorization([2]);
         (new UsuarioController())->getAll();
         exit;
     }
@@ -46,7 +49,7 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
         (new UsuarioController())->deleteSession();
         exit;
     }
-    
+
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
     exit;
