@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Manejo de preflight (CORS)
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -15,7 +15,7 @@ require_once 'controller/UsuarioController.php';
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = explode('/', trim($uri, '/'));
 
-// Ejemplo: /mi_api/usuarios
+
 if (isset($path[3]) && $path[3] === 'usuarios') {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($path[4])) {
@@ -30,13 +30,23 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
     }
 
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($path[4]) && $path[4] == 'register') {
         (new UsuarioController())->postUser();
         exit;
     }
-    
 
-    // Método no permitido
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($path[4]) && $path[4] === 'login'){
+        
+        (new UsuarioController())->getSession();
+        exit;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4]) && $path[4] === 'logout'){
+        
+        (new UsuarioController())->deleteSession();
+        exit;
+    }
+    
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
     exit;

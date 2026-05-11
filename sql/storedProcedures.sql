@@ -1,3 +1,4 @@
+-----------------------USUARIO SP---------------------
 DELIMITER //
 DROP PROCEDURE IF EXISTS sp_GestionUsuarios //
 CREATE PROCEDURE sp_GestionUsuarios(
@@ -51,19 +52,70 @@ BEGIN
             SELECT id_usuario, nombre, apellido, fecha_nacimiento, foto, genero, correo_electronico, alias, tipo_usuario
             FROM usuario
             WHERE estatus = 1;
-            LEAVE proc;
+            
 
         WHEN 'SELECT_ONE' THEN
             SELECT id_usuario, nombre, apellido, fecha_nacimiento, foto, genero, correo_electronico, alias, tipo_usuario
             FROM usuario
             WHERE id_usuario = p_id_usuario;
-            LEAVE proc;
+
+        WHEN 'SELECT_ONE_BY_CORREO' THEN
+            SELECT id_usuario, nombre, apellido, fecha_nacimiento, foto, genero, correo_electronico, contrasena, alias, tipo_usuario
+            FROM usuario
+            WHERE correo_electronico = p_correo_electronico AND estatus = 1;
+            
 
         WHEN 'DELETE' THEN
             UPDATE usuario
             SET estatus = 0
             WHERE id_usuario = p_id_usuario;
             
+        ELSE 
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Opción de gestión no valida';
+    END CASE;
+    COMMIT;
+END //
+
+--------------COMPANIA------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS sp_GestionCompanias //
+CREATE PROCEDURE sp_GestionCompanias(
+    IN p_opcion VARCHAR(50), 
+    IN p_id_compania INT UNSIGNED,
+    IN p_nombre VARCHAR(255),
+    IN p_logo MEDIUMBLOB
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    START TRANSACTION;
+    CASE p_opcion
+        WHEN 'INSERT' THEN
+            INSERT INTO compania(nombre, logo)
+            VALUES (p_nombre, p_logo);
+
+        WHEN 'UPDATE' THEN
+            UPDATE compania
+            SET nombre = p_nombre, logo = p_logo
+            WHERE id_compania = p_id_compania;
+
+        WHEN 'DELETE' THEN
+            UPDATE compania
+            SET estatus = 0
+            WHERE id_compania = p_id_compania;
+        
+        WHEN 'SELECT_ALL' THEN
+            SELECT id_compania, nombre, logo, estatus
+            FROM compania;
+
+        WHEN 'SELECT_ONE' THEN
+            SELECT id_compania, nombre, logo
+            FROM compania
+            WHERE id_compania = p_id_compania;
+
         ELSE 
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Opción de gestión no valida';
     END CASE;

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   genero char(1) NOT NULL COMMENT 'Se basa en los estándares legales de Mexico, M (Masculino), F (Femenino), X (No binario/Otro)',
   correo_electronico varchar(321) NOT NULL UNIQUE,
   contrasena varchar(255) NOT NULL COMMENT 'Se guarda la contraseña ya encriptada con password_hash de php',
-  alias varchar(255) NOT NULL COMMENT UNIQUE 'Identificador alfanumerico único por cliente',
+  alias varchar(255) NOT NULL UNIQUE COMMENT  'Identificador alfanumerico único por cliente',
   tipo_usuario tinyint(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Hay tres tipos de usuario. 0 (asegurado es default) ,1 (ajustador), 2 (supervisor)',
   estatus tinyint NOT NULL DEFAULT 1 COMMENT 'false (inactivo/eliminado), true(activo es default)'
 ) COMMENT='Tabla para almacenar a los usuarios del sistema';
