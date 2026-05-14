@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *"); 
+header("Access-Control-Allow-Origin: http://localhost:4200"); 
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
@@ -11,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'controller/UsuarioController.php';
+require_once 'controller/CompaniaController.php';
 require_once 'middleware/AuthMiddleware.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -76,6 +78,15 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
     exit;
+}
+
+if (isset($path[3]) && $path[3] === 'companias'){
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($path[4])) {
+        
+        AuthMiddleware::checkAuthorization([0, 1, 2]); 
+        (new CompaniaController())->getAll();
+        exit;
+    }
 }
 
 
