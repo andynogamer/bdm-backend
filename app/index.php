@@ -29,8 +29,16 @@ if (isset($path[3]) && $path[3] === 'usuarios') {
     }
 
     
-    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4]) && $path[4] != 'logout') {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4]) && $path[4] != 'logout' && $path[4] != 'profile') {
         (new UsuarioController())->getOne($path[4]);
+        exit;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($path[4]) && $path[4] === 'profile'){
+        
+        AuthMiddleware::checkAuthorization([0, 1, 2]);
+        
+        (new UsuarioController())->getProfile();
         exit;
     }
 

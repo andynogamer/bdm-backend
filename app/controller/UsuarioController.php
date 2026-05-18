@@ -40,6 +40,15 @@ class UsuarioController{
         }
     }
 
+    public function getProfile(){
+        $response = Usuario::obtenerUno($_SESSION['usuario']['id_usuario']);
+        if($response['success']){
+            $this->renderJSON($response['data'], 200);
+        }else{
+            $this->renderJSON($response, 500);
+        }
+    }
+
     public function postUser(){
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
