@@ -38,7 +38,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo mayores de 18 años pueden acceder.';
             ELSE
                 UPDATE usuario
-                SET nombre = p_nombre, apellido = p_apellido, fecha_nacimiento = p_fecha_nacimiento, foto = p_foto, genero = p_genero
+                SET nombre = p_nombre, apellido = p_apellido, fecha_nacimiento = p_fecha_nacimiento, foto = p_foto, genero = p_genero, contrasena = p_contrasena
                 WHERE id_usuario = p_id_usuario;
                 
             END IF;

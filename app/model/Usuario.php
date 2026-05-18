@@ -167,6 +167,20 @@ class Usuario{
             $fecha_nacimiento = mb_strtoupper(trim($data['fecha_nacimiento']));
             $foto = $data['foto'] ?? null;
             $genero = mb_strtoupper(trim($data['genero']));
+            $nonhash_contrasena = $data['contrasena'] ?? null;
+            $contrasena = null;
+
+            if(is_null($nonhash_contrasena) || $nonhash_contrasena == ""){
+                $contrasena = $_SESSION['usuario']['contrasena'];
+            }else if(!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $nonhash_contrasena)){
+                return [
+                    'success' => false,
+                    'error' => 'La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo'
+                ];
+            }else{
+                $contrasena = password_hash($nonhash_contrasena, PASSWORD_DEFAULT);
+            }
+            
             
 
             if (!preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/u", $nombre)) {
@@ -203,14 +217,15 @@ class Usuario{
                     ];
             }
 
-            $stmt = $db->prepare("CALL sp_GestionUsuarios('UPDATE', ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL)");
+            $stmt = $db->prepare("CALL sp_GestionUsuarios('UPDATE', ?, ?, ?, ?, ?, ?, NULL, ?, NULL, NULL)");
             $stmt->execute([
                 $id_usuario,
                 $nombre,
                 $apellido,
                 $fecha_nacimiento,
                 $foto,
-                $genero
+                $genero,
+                $contrasena
                 
             ]);
             return [
