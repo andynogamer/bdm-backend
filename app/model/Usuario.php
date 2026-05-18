@@ -7,12 +7,7 @@ class Usuario{
             $db = Database::connect();
             $stmt = $db->query("CALL sp_GestionUsuarios('SELECT_ALL', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)");
             $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($usuarios as &$user) {
-                if ($user['foto']) {
-                    
-                    $user['foto'] = base64_encode($user['foto']);
-                }
-            }
+            
             return [
                 'success' => true,
                 'data' => $usuarios
@@ -32,9 +27,13 @@ class Usuario{
             $stmt->execute([
                 $id
             ]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            
+
             return [
                 'success' => true,
-                'data' => $stmt->fetch(PDO::FETCH_ASSOC)
+                'data' => $user
             ];
 
         }catch(Exception $e){
